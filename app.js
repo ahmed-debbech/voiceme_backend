@@ -6,6 +6,7 @@ var logger = require('morgan');
 var db = require("./db")
 db.create();
 var indexRouter = require('./routes/index');
+var messagesRouter = require('./routes/messages');
 
 var app = express();
 
@@ -39,6 +40,7 @@ async function checkPin(pin){
 
 }
 app.use('/', indexRouter);
+app.use('/message', messagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

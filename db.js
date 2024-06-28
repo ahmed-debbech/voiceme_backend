@@ -25,7 +25,15 @@ function createTables(newdb) {
     newdb.exec(`
     create table whitelist (
         pin int primary key not null
-    );`, ()  => {
+    );
+    create table voice (
+        id integer primary key AUTOINCREMENT,
+        duration int,
+        user int,
+        date varchar,
+        status varchar
+    );
+    `, ()  => {
             //runQueries(newdb);
     });
 }
@@ -79,9 +87,26 @@ async function whitelist(){
     console.log(r)
     return list;
 }
+
+function addVoice(duration, user, date, status){
+    console.log(duration , user, date, status)
+    var newdb = new sqlite3.Database('mcu.db', (err) => {
+        if (err) {
+            console.log("Getting error " + err);
+            exit(1);
+        }
+        newdb.exec(
+        "insert into voice (user, duration, date, status) values ("+user+","+duration+", "+date+", '"+status+"');"
+        , (err)  => {
+            console.log(err)
+        });
+    });
+}
+
 module.exports = {
     create,
     allow,
     deny,
     whitelist,
+    addVoice
 }
