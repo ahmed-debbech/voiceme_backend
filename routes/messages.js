@@ -4,6 +4,7 @@ let db = require("../db")
 var fs = require("fs");
 
 router.post('/voice', async function(req, res, next) {
+    
     let encodedVoice = req.body.voice;
     let duration = req.body.duration;
     let user = req.headers.pin;
@@ -17,5 +18,7 @@ router.post('/voice', async function(req, res, next) {
         sent : true
     })
 });
+
+
 
 module.exports = router;
