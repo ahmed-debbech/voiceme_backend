@@ -88,6 +88,57 @@ async function whitelist(){
     return list;
 }
 
+async function getLast10(){
+    let list = []
+    var newdb = new sqlite3.Database('mcu.db', (err) => {
+        if (err) {
+            console.log("Getting error " + err);
+            exit(1);
+        }
+    });
+    //console.log(newdb)
+    let r = await new Promise((resolve, reject) => {
+        newdb.all('SELECT * FROM voice order by date desc limit 10',[],(err,rows)=>{
+            if(err){
+                return console.error(err.message);
+            }else{   
+                rows.forEach((row)=>{
+                    list.push(row)    
+                });
+                resolve(list);
+            }
+
+        });
+    });
+    //console.log(r)
+    return list;
+}
+
+async function getVoice(id){
+    let v = null;
+    var newdb = new sqlite3.Database('mcu.db', (err) => {
+        if (err) {
+            console.log("Getting error " + err);
+            exit(1);
+        }
+    });
+    //console.log(newdb)
+    let r = await new Promise((resolve, reject) => {
+        newdb.all('SELECT * FROM voice where id = '+id,[],(err,rows)=>{
+            if(err){
+                return console.error(err.message);
+            }else{   
+                rows.forEach((row)=>{
+                    v = row
+                });
+                resolve(v);
+            }
+
+        });
+    });
+    return v;
+}
+
 function addVoice(duration, user, date, status){
     console.log(duration , user, date, status)
     var newdb = new sqlite3.Database('mcu.db', (err) => {
@@ -95,6 +146,7 @@ function addVoice(duration, user, date, status){
             console.log("Getting error " + err);
             exit(1);
         }
+        console.log(duration, user, date, status);
         newdb.exec(
         "insert into voice (user, duration, date, status) values ("+user+","+duration+", "+date+", '"+status+"');"
         , (err)  => {
@@ -108,5 +160,7 @@ module.exports = {
     allow,
     deny,
     whitelist,
-    addVoice
+    addVoice,
+    getLast10,
+    getVoice
 }

@@ -19,6 +19,29 @@ router.post('/voice', async function(req, res, next) {
     })
 });
 
+router.get('/voice', async function(req, res, next) {
+    
+    let voices = await db.getLast10();
 
+    res.json({
+        voices: voices
+    })
+});
+router.get('/voice/content/:id', async function(req, res, next) {
+    
+    let voice = await db.getVoice(req.params.id)
+    if(voice == null) {res.json({content: null}); return;}
+
+    let content = null;
+    try{
+        content = fs.readFileSync('voices/'+voice.date+ "-" + voice.user ).toString();
+    }catch(e){
+        console.log(e)
+        res.json({content: null}); return;
+    }
+    res.json({
+        content: content
+    })
+});
 
 module.exports = router;
